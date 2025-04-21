@@ -1,0 +1,266 @@
+// Main controller with professional implementation
+class PocketOptionGuru {
+  constructor() {
+    this.observer = null;
+    this.intervalId = null;
+    this.initialized = false;
+    this.selectors = {
+      levelBadge: [
+        '.your-level-badge.your-level-badge--0',
+        '[class*="level-badge"]',
+        '[class*="user-level"]'
+      ],
+      tooltips: [
+        '.tooltip-text',
+        '[class*="level-tooltip"]',
+        '[class*="user-level-tooltip"]'
+      ],
+      profileIcons: [
+        '.profile-level__icon',
+        '[class*="level-icon"]',
+        '[class*="profile-level"]'
+      ],
+      balanceLabels: [
+        '.balance-info-block__label',
+        '[class*="balance-label"]',
+        '[class*="account-balance"]'
+      ]
+    };
+  }
+
+  initialize() {
+    if (this.initialized) return;
+    
+    console.log('[PocketOptionGuru] Initializing...');
+    
+    // Initial application
+    this.applyChanges();
+    
+    // Set up continuous monitoring
+    this.setupObserver();
+    this.setupInterval();
+    
+    this.initialized = true;
+  }
+
+  applyChanges() {
+    try {
+      // 1. Page title modification
+      this.modifyTitle();
+      
+      // 2. Level badge styling
+      this.styleLevelBadges();
+      
+      // 3. Tooltip modifications
+      this.modifyTooltips();
+      
+      // 4. Profile level colors
+      this.modifyProfileColors();
+      
+      // 5. Balance labels
+      this.modifyBalanceLabels();
+      
+      // 6. General text replacements
+      this.replaceTextElements();
+      
+    } catch (error) {
+      console.error('[PocketOptionGuru] Error applying changes:', error);
+    }
+  }
+
+  modifyTitle() {
+    if (document.title.includes("Pocket Option") && !document.title.includes("Real Account")) {
+      document.title = "Quick Trading Real Account | Pocket Option";
+    }
+  }
+
+  styleLevelBadges() {
+    // Find all level badge containers
+    const badgeContainers = document.querySelectorAll('.info__your-level-badge');
+    
+    badgeContainers.forEach(container => {
+        // Skip if already modified
+        if (container.dataset.guruModified) return;
+        
+        // Clear existing content
+        container.innerHTML = '';
+        
+        // Create the outer badge container
+        const badgeDiv = document.createElement('div');
+        badgeDiv.className = 'your-level-badge your-level-badge--0';
+        badgeDiv.setAttribute('data-level', '0');
+        badgeDiv.style.backgroundColor = 'rgb(210, 165, 43)';
+        badgeDiv.style.borderColor = 'rgb(179, 141, 34)';
+        badgeDiv.style.transition = 'all 0.3s ease';
+        
+        // Create the inner link element
+        const link = document.createElement('a');
+        link.href = 'https://pocketoption.com/en/cabinet/loyalty-program/';
+        link.style.color = 'rgb(255, 255, 255)';
+        link.style.textDecoration = 'none';
+        link.style.fontWeight = 'bold';
+        link.textContent = 'Guru';
+        
+        // Add hover effects
+        badgeDiv.addEventListener('mouseover', () => {
+            badgeDiv.style.backgroundColor = 'rgb(224, 180, 60)';
+        });
+        
+        badgeDiv.addEventListener('mouseout', () => {
+            badgeDiv.style.backgroundColor = 'rgb(210, 165, 43)';
+        });
+        
+        // Assemble the structure
+        badgeDiv.appendChild(link);
+        container.appendChild(badgeDiv);
+        
+        // Mark as modified
+        container.dataset.guruModified = 'true';
+        badgeDiv.dataset.guruStyled = 'true';
+    });
+    
+    // Keep the original styling as fallback
+    this.queryElements(this.selectors.levelBadge).forEach(badge => {
+        if (badge.dataset.guruStyled) return;
+        
+        badge.style.backgroundColor = '#d2a52b';
+        badge.style.borderColor = '#b38d22';
+        
+        const link = badge.querySelector('a');
+        if (link) {
+            link.style.color = '#ffffff';
+            link.style.textDecoration = 'none';
+            link.style.fontWeight = 'bold';
+        }
+        
+        badge.style.transition = 'all 0.3s ease';
+        badge.addEventListener('mouseover', () => {
+            badge.style.backgroundColor = '#e0b43c';
+        });
+        badge.addEventListener('mouseout', () => {
+            badge.style.backgroundColor = '#d2a52b';
+        });
+        
+        badge.dataset.guruStyled = 'true';
+    });
+  }
+
+  modifyTooltips() {
+    this.queryElements(this.selectors.tooltips).forEach(tooltip => {
+      if (tooltip.textContent.trim() === 'Beginner' && !tooltip.dataset.guruModified) {
+        tooltip.textContent = 'Guru';
+        tooltip.dataset.guruModified = 'true';
+      }
+    });
+  }
+
+  modifyProfileColors() {
+    // SVG paths
+    document.querySelectorAll('path').forEach(path => {
+      const fill = path.getAttribute('fill');
+      if (fill && fill.toLowerCase() === '#32ac41' && !path.dataset.guruModified) {
+        path.setAttribute('fill', '#d2a52b');
+        path.dataset.guruModified = 'true';
+      }
+    });
+    
+    // Profile icons
+    this.queryElements(this.selectors.profileIcons).forEach(icon => {
+      if (!icon.dataset.guruModified) {
+        icon.style.color = '#d2a52b';
+        icon.dataset.guruModified = 'true';
+      }
+    });
+  }
+
+  modifyBalanceLabels() {
+    this.queryElements(this.selectors.balanceLabels).forEach(label => {
+      if (label.textContent.includes('QT Demo') && !label.dataset.guruModified) {
+        label.textContent = label.textContent.replace('QT Demo', 'QT Real');
+        label.dataset.guruModified = 'true';
+      }
+    });
+  }
+
+  replaceTextElements() {
+    const textElements = document.querySelectorAll('a, span, div, p, li, td');
+    textElements.forEach(element => {
+      if (element.textContent.trim() === 'Beginner' && !element.dataset.guruModified) {
+        element.textContent = 'Guru';
+        element.dataset.guruModified = 'true';
+      }
+    });
+  }
+
+  queryElements(selectors) {
+    const elements = [];
+    selectors.forEach(selector => {
+      try {
+        document.querySelectorAll(selector).forEach(el => {
+          if (!elements.includes(el)) {
+            elements.push(el);
+          }
+        });
+      } catch (e) {
+        console.warn(`[PocketOptionGuru] Invalid selector: ${selector}`);
+      }
+    });
+    return elements;
+  }
+
+  setupObserver() {
+    if (this.observer) return;
+    
+    this.observer = new MutationObserver(mutations => {
+      let needsUpdate = false;
+      mutations.forEach(mutation => {
+        if (mutation.addedNodes.length > 0) {
+          needsUpdate = true;
+        }
+      });
+      if (needsUpdate) {
+        this.applyChanges();
+      }
+    });
+    
+    this.observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: false,
+      characterData: false
+    });
+  }
+
+  setupInterval() {
+    if (this.intervalId) clearInterval(this.intervalId);
+    
+    this.intervalId = setInterval(() => {
+      this.applyChanges();
+    }, 1000);
+    
+    // Stop after 30 seconds to prevent memory leaks
+    setTimeout(() => {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
+    }, 30000);
+  }
+}
+
+// Initialize when page is ready
+function initExtension() {
+  const guru = new PocketOptionGuru();
+  
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    guru.initialize();
+  } else {
+    document.addEventListener('DOMContentLoaded', () => guru.initialize());
+  }
+  
+  // Also inject as global for debugging
+  window.PocketOptionGuru = guru;
+}
+
+
+initExtension();
